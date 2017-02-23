@@ -137,6 +137,23 @@ func (this *EchoResponse) Reprompt(text string) *EchoResponse {
 	return this
 }
 
+func (this *EchoResponse) AudioPlayer(url string) *EchoResponse {
+	audioItem := EchoAudioStream{
+		Token:         "I-dont-know-what-goes-here",
+		URL:           url,
+		OffsetInMilli: 0,
+	}
+	this.Response.Directives = &EchoRespAudioDir{
+		Type:         "AudioPlayer.Play",
+		PlayBehavior: "REPLACE_ALL",
+		AudioItem: EchoAudioItem{
+			Stream: audioItem,
+		},
+	}
+
+	return this
+}
+
 func (this *EchoResponse) EndSession(flag bool) *EchoResponse {
 	this.Response.ShouldEndSession = flag
 
@@ -202,10 +219,11 @@ type EchoResponse struct {
 }
 
 type EchoRespBody struct {
-	OutputSpeech     *EchoRespPayload `json:"outputSpeech,omitempty"`
-	Card             *EchoRespPayload `json:"card,omitempty"`
-	Reprompt         *EchoReprompt    `json:"reprompt,omitempty"` // Pointer so it's dropped if empty in JSON response.
-	ShouldEndSession bool             `json:"shouldEndSession"`
+	OutputSpeech     *EchoRespPayload  `json:"outputSpeech,omitempty"`
+	Card             *EchoRespPayload  `json:"card,omitempty"`
+	Reprompt         *EchoReprompt     `json:"reprompt,omitempty"` // Pointer so it's dropped if empty in JSON response.
+	Directives       *EchoRespAudioDir `json:"directives,omitempty"`
+	ShouldEndSession bool              `json:"shouldEndSession"`
 }
 
 type EchoReprompt struct {
@@ -224,4 +242,20 @@ type EchoRespPayload struct {
 	SSML    string        `json:"ssml,omitempty"`
 	Content string        `json:"content,omitempty"`
 	Image   EchoRespImage `json:"image,omitempty"`
+}
+
+type EchoRespAudioDir struct {
+	Type         string        `json:"type"`
+	PlayBehavior string        `json:"playBehavior,omitempty"`
+	AudioItem    EchoAudioItem `json:"audioItem,omitempty"`
+}
+
+type EchoAudioItem struct {
+	Stream EchoAudioStream `json:"stream"`
+}
+
+type EchoAudioStream struct {
+	Token         string `json:"token"`
+	URL           string `json:"url"`
+	OffsetInMilli int    `json:"offsetInMilliseconds"`
 }
