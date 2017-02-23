@@ -161,7 +161,7 @@ func (this *EchoResponse) AudioPlayer(text, url string) *EchoResponse {
 
 	mrs, err := json.Marshal(this.Response)
 	log.Println(err)
-	log.Println(mrs)
+	log.Println(string(mrs))
 
 	return this
 }
