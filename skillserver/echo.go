@@ -3,6 +3,7 @@ package skillserver
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"time"
 )
 
@@ -137,7 +138,12 @@ func (this *EchoResponse) Reprompt(text string) *EchoResponse {
 	return this
 }
 
-func (this *EchoResponse) AudioPlayer(url string) *EchoResponse {
+func (this *EchoResponse) AudioPlayer(text, url string) *EchoResponse {
+	this.Response.OutputSpeech = &EchoRespPayload{
+		Type: "PlainText",
+		Text: text,
+	}
+
 	audioItem := EchoAudioStream{
 		Token:         "I-dont-know-what-goes-here",
 		URL:           url,
@@ -152,6 +158,8 @@ func (this *EchoResponse) AudioPlayer(url string) *EchoResponse {
 			},
 		},
 	}
+
+	log.Println(this.Response)
 
 	return this
 }
