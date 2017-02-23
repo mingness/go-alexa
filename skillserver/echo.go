@@ -143,11 +143,13 @@ func (this *EchoResponse) AudioPlayer(url string) *EchoResponse {
 		URL:           url,
 		OffsetInMilli: 0,
 	}
-	this.Response.Directives = &EchoRespAudioDir{
-		Type:         "AudioPlayer.Play",
-		PlayBehavior: "REPLACE_ALL",
-		AudioItem: EchoAudioItem{
-			Stream: audioItem,
+	this.Response.Directives = &[]EchoRespAudioDir{
+		EchoRespAudioDir{
+			Type:         "AudioPlayer.Play",
+			PlayBehavior: "REPLACE_ALL",
+			AudioItem: EchoAudioItem{
+				Stream: audioItem,
+			},
 		},
 	}
 
@@ -219,11 +221,11 @@ type EchoResponse struct {
 }
 
 type EchoRespBody struct {
-	OutputSpeech     *EchoRespPayload  `json:"outputSpeech,omitempty"`
-	Card             *EchoRespPayload  `json:"card,omitempty"`
-	Reprompt         *EchoReprompt     `json:"reprompt,omitempty"` // Pointer so it's dropped if empty in JSON response.
-	Directives       *EchoRespAudioDir `json:"directives,omitempty"`
-	ShouldEndSession bool              `json:"shouldEndSession"`
+	OutputSpeech     *EchoRespPayload    `json:"outputSpeech,omitempty"`
+	Card             *EchoRespPayload    `json:"card,omitempty"`
+	Reprompt         *EchoReprompt       `json:"reprompt,omitempty"` // Pointer so it's dropped if empty in JSON response.
+	Directives       *[]EchoRespAudioDir `json:"directives,omitempty"`
+	ShouldEndSession bool                `json:"shouldEndSession"`
 }
 
 type EchoReprompt struct {
