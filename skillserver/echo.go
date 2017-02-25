@@ -138,24 +138,52 @@ func (this *EchoResponse) Reprompt(text string) *EchoResponse {
 	return this
 }
 
-func (this *EchoResponse) AudioPlayer(text, url string) *EchoResponse {
-	this.Response.OutputSpeech = &EchoRespPayload{
-		Type: "PlainText",
-		Text: text,
-	}
-
-	audioItem := EchoAudioStream{
-		Token:         "I-dont-know-what-goes-here",
-		URL:           url,
-		OffsetInMilli: 0,
-	}
+// AudioPlayerPlay Sends Alexa a command to stream the audio file identified by the specified audioItem.
+// For more information see https://developer.amazon.com/blogs/post/Tx1DSINBM8LUNHY/new-alexa-skills-kit-ask-feature-audio-streaming-in-alexa-skills
+func (this *EchoResponse) AudioPlayerPlay(url, token string) *EchoResponse {
 	this.Response.Directives = &[]EchoRespAudioDir{
 		EchoRespAudioDir{
 			Type:         "AudioPlayer.Play",
 			PlayBehavior: "REPLACE_ALL",
 			AudioItem: EchoAudioItem{
-				Stream: audioItem,
+				Stream: EchoAudioStream{
+					Token:         token,
+					URL:           url,
+					OffsetInMilli: 0,
+				},
 			},
+		},
+	}
+
+	mrs, err := json.Marshal(this.Response)
+	log.Println(err)
+	log.Println(string(mrs))
+
+	return this
+}
+
+// AudioPlayerStop Stops any currently playing audio stream.
+// For more information see https://developer.amazon.com/blogs/post/Tx1DSINBM8LUNHY/new-alexa-skills-kit-ask-feature-audio-streaming-in-alexa-skills
+func (this *EchoResponse) AudioPlayerStop(url, token string) *EchoResponse {
+	this.Response.Directives = &[]EchoRespAudioDir{
+		EchoRespAudioDir{
+			Type: "AudioPlayer.Stop",
+		},
+	}
+
+	mrs, err := json.Marshal(this.Response)
+	log.Println(err)
+	log.Println(string(mrs))
+
+	return this
+}
+
+// AudioPlayerClearQueue Clears the queue of all audio streams.
+// For more information see https://developer.amazon.com/blogs/post/Tx1DSINBM8LUNHY/new-alexa-skills-kit-ask-feature-audio-streaming-in-alexa-skills
+func (this *EchoResponse) AudioPlayClearQueue(url, token string) *EchoResponse {
+	this.Response.Directives = &[]EchoRespAudioDir{
+		EchoRespAudioDir{
+			Type: "AudioPlayer.ClearQueue",
 		},
 	}
 
